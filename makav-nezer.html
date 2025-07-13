@@ -69,20 +69,21 @@
   <h1>שליחת דפי מעקב למג"ש</h1>
 
   <label for="magidSelect">בחר מג"ש:</label>
-  <select id="magidSelect"></select>
+  <select id="magidSelect">
+    <option value="" disabled selected>— בחר מג"ש —</option>
+  </select>
 
   <label for="parasha">
-  פרשת שבוע:
-  <span style="font-size: 13px; font-weight: normal; color: #666;">
-    (במידה ולא נכתב פרשה יכתב פרשת השבוע הנוכחי)
-  </span>
- </label>
-
+    פרשת שבוע:
+    <span style="font-size: 13px; font-weight: normal; color: #666;">
+      (במידה ולא נכתב פרשה יכתב פרשת השבוע הנוכחי)
+    </span>
+  </label>
   <input type="text" id="parasha" placeholder="לדוגמה: ויצא" />
 
   <label for="emailSelect">בחר כתובת מייל לשליחה:</label>
   <select id="emailSelect" onchange="toggleCustomEmail()">
-    <option disabled selected hidden>— בחר כתובת מייל —</option>
+    <option value="" disabled selected>— בחר כתובת מייל —</option>
     <option value="a0548453329a@gmail.com">הרב משה אהרן טאומן (a0548453329a@gmail.com)</option>
     <option value="32218gk@gmail.com">יצחק גבריאלוב (32218gk@gmail.com)</option>
     <option value="other">אחר...</option>
@@ -108,14 +109,6 @@
     ];
 
     const selectMagid = document.getElementById("magidSelect");
-
-    const placeholderOption = document.createElement("option");
-    placeholderOption.textContent = "— בחר מג\"ש —";
-    placeholderOption.disabled = true;
-    placeholderOption.selected = true;
-    placeholderOption.hidden = true;
-    selectMagid.appendChild(placeholderOption);
-
     magshim.forEach(m => {
       const option = document.createElement("option");
       option.value = m.id;
@@ -132,13 +125,34 @@
     function sendWebhook() {
       const magidId = document.getElementById("magidSelect").value;
       const emailSelect = document.getElementById("emailSelect").value;
-      const customEmail = document.getElementById("customEmail").value;
-      const parasha = document.getElementById("parasha").value;
-      const email = (emailSelect === "other") ? customEmail : emailSelect;
+      const customEmail = document.getElementById("customEmail").value.trim();
+      const parasha = document.getElementById("parasha").value.trim();
 
-      if (!magidId || !email) {
-        alert("אנא בחר מג\"ש והזן כתובת מייל");
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let email = "";
+
+      if (!magidId) {
+        alert("אנא בחר מג\"ש");
         return;
+      }
+
+      if (!emailSelect) {
+        alert("אנא בחר כתובת מייל");
+        return;
+      }
+
+      if (emailSelect === "other") {
+        if (!customEmail) {
+          alert("אנא הזן כתובת מייל");
+          return;
+        }
+        if (!emailRegex.test(customEmail)) {
+          alert("כתובת המייל אינה תקינה");
+          return;
+        }
+        email = customEmail;
+      } else {
+        email = emailSelect;
       }
 
       const payload = {
