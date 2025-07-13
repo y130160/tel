@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>שליחת מייל לר"מ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 40px;
+      max-width: 600px;
+      margin: auto;
+      direction: rtl;
+      color: #333;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    img {
+      max-width: 160px;
+      display: block;
+      margin: 0 auto 30px auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    select, input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    #sendBtn {
+      width: 50%;
+      display: block;
+      margin: 30px auto 0 auto;
+      padding: 12px;
+      background-color: #d4a74c;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #sendBtn:hover {
+      background-color: #c5953d;
+    }
+    #customEmailContainer {
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://raw.githubusercontent.com/y130160/nezer/refs/heads/main/%D7%9C%D7%95%D7%92%D7%95%20%D7%A0%D7%96%D7%A8.png?token=GHSAT0AAAAAADGRRZUPPDRSFS7AUZUAKP4O2DUEH4Q" alt="לוגו נזר" />
+  <h1>שליחת דפי מעקב למג"ש</h1>
+
+  <label for="magidSelect">בחר מג"ש:</label>
+  <select id="magidSelect"></select>
+
+  <label for="emailSelect">בחר כתובת מייל לשליחה:</label>
+  <select id="emailSelect" onchange="toggleCustomEmail()">
+    <option value="">— בחר —</option>
+    <option value="a0548453329a@gmail.com">הרב משה אהרן טאומן (a0548453329a@gmail.com)</option>
+    <option value="32218gk@gmail.com">יצחק גבריאלוב (32218gk@gmail.com)</option>
+    <option value="other">אחר...</option>
+  </select>
+
+  <div id="customEmailContainer">
+    <label for="customEmail">הכנס כתובת מייל:</label>
+    <input type="email" id="customEmail" placeholder="example@email.com" />
+  </div>
+
+  <button id="sendBtn" onclick="sendWebhook()">שלח</button>
+
+  <script>
+    const magshim = [
+      {"name": "הרב יצחק ברלינסקי שליט\"א", "id": "recss1NU96b8j8vnX"},
+      {"name": "הרב טובי' גרוסקופף שליט\"א", "id": "recveRXsIhstfZYWX"},
+      {"name": "הרב משה אהרן טאומן שליט\"א", "id": "rec20ycFup1I1KMid"},
+      {"name": "הרב ישראל ליברמן שליט\"א", "id": "recp2qavwqwl5lXd5"},
+      {"name": "הרב שמחה פפר שליט\"א", "id": "recMIxXijLg8pc4If"},
+      {"name": "הרב חיים אהרן פרומן שליט\"א", "id": "recozzieGVTyi79Ff"},
+      {"name": "הרב מרדכי יוסף קונסקי שליט\"א", "id": "reck1V3dL1IkB0gse"},
+      {"name": "הרב געציל קורלנסקי שליט\"א", "id": "rec1nj90zQav21soU"}
+      // ניתן להוסיף את כל הרשימה המלאה
+    ];
+
+    const selectMagid = document.getElementById("magidSelect");
+    magshim.forEach(m => {
+      const option = document.createElement("option");
+      option.value = m.id;
+      option.textContent = m.name;
+      selectMagid.appendChild(option);
+    });
+
+    function toggleCustomEmail() {
+      const emailSelect = document.getElementById("emailSelect");
+      const customEmailContainer = document.getElementById("customEmailContainer");
+      customEmailContainer.style.display = emailSelect.value === "other" ? "block" : "none";
+    }
+
+    function sendWebhook() {
+      const magidId = document.getElementById("magidSelect").value;
+      const emailSelect = document.getElementById("emailSelect").value;
+      const customEmail = document.getElementById("customEmail").value;
+
+      const email = (emailSelect === "other") ? customEmail : emailSelect;
+
+      if (!magidId || !email) {
+        alert("אנא בחר מג\"ש והזן כתובת מייל");
+        return;
+      }
+
+      const payload = {
+        id: magidId,
+        email: email
+      };
+
+      fetch("https://hook.eu2.make.com/en8q3e2fq921xf5anbefa3twv5ti8wii", { // ← החלף לכתובת אמיתית
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("נשלח בהצלחה, בדקות הקרובות ישלח למייל דפי המעקב!");
+        } else {
+          alert("שגיאה בשליחה");
+        }
+      })
+      .catch(err => {
+        alert("שגיאה: " + err.message);
+      });
+    }
+  </script>
+
+</body>
+</html>
