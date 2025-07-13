@@ -84,6 +84,9 @@
     <input type="email" id="customEmail" placeholder="example@email.com" />
   </div>
 
+  <label for="parasha">פרשת שבוע:</label>
+  <input type="text" id="parasha" placeholder="לדוגמה: ויצא" />
+
   <button id="sendBtn" onclick="sendWebhook()">שלח</button>
 
   <script>
@@ -96,7 +99,6 @@
       {"name": "הרב חיים אהרן פרומן שליט\"א", "id": "recozzieGVTyi79Ff"},
       {"name": "הרב מרדכי יוסף קונסקי שליט\"א", "id": "reck1V3dL1IkB0gse"},
       {"name": "הרב געציל קורלנסקי שליט\"א", "id": "rec1nj90zQav21soU"}
-      // ניתן להוסיף את כל הרשימה המלאה
     ];
 
     const selectMagid = document.getElementById("magidSelect");
@@ -117,6 +119,7 @@
       const magidId = document.getElementById("magidSelect").value;
       const emailSelect = document.getElementById("emailSelect").value;
       const customEmail = document.getElementById("customEmail").value;
+      const parasha = document.getElementById("parasha").value;
 
       const email = (emailSelect === "other") ? customEmail : emailSelect;
 
@@ -127,10 +130,11 @@
 
       const payload = {
         id: magidId,
-        email: email
+        email: email,
+        parasha: parasha
       };
 
-      fetch("https://hook.eu2.make.com/en8q3e2fq921xf5anbefa3twv5ti8wii", { // ← החלף לכתובת אמיתית
+      fetch("https://hook.eu2.make.com/en8q3e2fq921xf5anbefa3twv5ti8wii", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -149,6 +153,3 @@
       });
     }
   </script>
-
-</body>
-</html>
