@@ -71,9 +71,12 @@
   <label for="magidSelect">בחר מג"ש:</label>
   <select id="magidSelect"></select>
 
+  <label for="parasha">פרשת שבוע:</label>
+  <input type="text" id="parasha" placeholder="לדוגמה: ויצא" />
+
   <label for="emailSelect">בחר כתובת מייל לשליחה:</label>
   <select id="emailSelect" onchange="toggleCustomEmail()">
-    <option value="">— בחר —</option>
+    <option disabled selected hidden>— בחר כתובת מייל —</option>
     <option value="a0548453329a@gmail.com">הרב משה אהרן טאומן (a0548453329a@gmail.com)</option>
     <option value="32218gk@gmail.com">יצחק גבריאלוב (32218gk@gmail.com)</option>
     <option value="other">אחר...</option>
@@ -83,9 +86,6 @@
     <label for="customEmail">הכנס כתובת מייל:</label>
     <input type="email" id="customEmail" placeholder="example@email.com" />
   </div>
-
-  <label for="parasha">פרשת שבוע:</label>
-  <input type="text" id="parasha" placeholder="לדוגמה: ויצא" />
 
   <button id="sendBtn" onclick="sendWebhook()">שלח</button>
 
@@ -102,6 +102,14 @@
     ];
 
     const selectMagid = document.getElementById("magidSelect");
+
+    const placeholderOption = document.createElement("option");
+    placeholderOption.textContent = "— בחר מג\"ש —";
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    placeholderOption.hidden = true;
+    selectMagid.appendChild(placeholderOption);
+
     magshim.forEach(m => {
       const option = document.createElement("option");
       option.value = m.id;
@@ -120,7 +128,6 @@
       const emailSelect = document.getElementById("emailSelect").value;
       const customEmail = document.getElementById("customEmail").value;
       const parasha = document.getElementById("parasha").value;
-
       const email = (emailSelect === "other") ? customEmail : emailSelect;
 
       if (!magidId || !email) {
@@ -153,3 +160,6 @@
       });
     }
   </script>
+
+</body>
+</html>
